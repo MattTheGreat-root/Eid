@@ -1,17 +1,14 @@
 package db;
 import java.util.ArrayList;
+import db.exception.*;
 
 public class Database {
-    //better way to use id
-    static int count = 1;
-    private Database() {
-        count++;
-    }
-    private static ArrayList<Entity> entities = new ArrayList<Entity>();
+    //better way to use id?
+    private Database() {}
+    private static ArrayList<Entity> entities = new ArrayList<>();
 
     public static void add(Entity e){
         entities.add(e);
-        e.id = count++;
     }
 
     public static Entity get(int id){
@@ -20,24 +17,27 @@ public class Database {
                 return e;
             }
         }
-        throw EntityNotFoundException;
+        throw new EntityNotFoundException(id);
     }
 
     public static void delete(int id){
         for(Entity e : entities){
             if(e.id == id){
                 entities.remove(e);
+                return;
             }
         }
-        throw EntityNotFoundException;
+        throw new EntityNotFoundException(id);
     }
 
-    public static void update(Entity e){
-        for (Entity temp : entities) {
-            if(temp.id == e.id){
-                temp = e;
+    public static void update(Entity e) {
+        for (int i = 0; i < entities.size(); i++) {
+            if (entities.get(i).id == e.id) {
+                entities.set(i, e);
+                return;
             }
         }
-        throw EntityNotFoundException;
+        throw new EntityNotFoundException("Entity with ID " + e.id + " not found");
     }
+
 }
