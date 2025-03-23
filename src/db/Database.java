@@ -8,13 +8,13 @@ public class Database {
     private static ArrayList<Entity> entities = new ArrayList<>();
 
     public static void add(Entity e){
-        entities.add(e);
+        entities.add(e.clone());
     }
 
     public static Entity get(int id){
         for(Entity e : entities){
             if(e.id == id){
-                return e;
+                return e.clone();
             }
         }
         throw new EntityNotFoundException(id);
@@ -33,7 +33,7 @@ public class Database {
     public static void update(Entity e) {
         for (int i = 0; i < entities.size(); i++) {
             if (entities.get(i).id == e.id) {
-                entities.set(i, e);
+                entities.set(i, e.clone());
                 return;
             }
         }
