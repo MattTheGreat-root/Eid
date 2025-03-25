@@ -8,6 +8,7 @@ public abstract class Entity implements Cloneable {
         this.id = count++;
     }
 
+    @Override
     public Entity clone(){
         try {
             return (Entity) super.clone();
@@ -16,4 +17,6 @@ public abstract class Entity implements Cloneable {
             throw new RuntimeException("Cloning not supported", e);
         }
     }
+
+    public abstract int getEntityCode();
 }
