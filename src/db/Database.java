@@ -1,6 +1,7 @@
 package db;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import db.exception.*;
 
@@ -12,14 +13,15 @@ public class Database {
     public static void add(Entity e) throws InvalidEntityException {
 
         Validator v = validators.get(e.getEntityCode());
-        //double check
-        if (v == null) {
-            throw new IllegalArgumentException("No validator found for entity code: " + e.getEntityCode());
+
+        if (v != null) {
+            v.validate(e);
         }
-        else {
-             v.validate(e);
-             entities.add(e.clone());
+        if (e instanceof Trackable){
+            ((Trackable) e).setCreationDate(new Date());
+            ((Trackable) e).setLastModificationDate(new Date());
         }
+        entities.add(e.clone());
     }
 
     public static Entity get(int id){
@@ -43,16 +45,18 @@ public class Database {
 
     public static void update(Entity e) throws InvalidEntityException {
         Validator v = validators.get(e.getEntityCode());
-        if (v == null) {
-            throw new IllegalArgumentException("No validator found for entity code: " + e.getEntityCode());
-        }
-        else {
+
+        if (v != null) {
             v.validate(e);
-            for (int i = 0; i < entities.size(); i++) {
-                if (entities.get(i).id == e.id) {
-                      entities.set(i, e.clone());
-                      return;
-                }
+        }
+        if (e instanceof Trackable){
+            ((Trackable) e).setLastModificationDate(new Date());
+        }
+
+        for (int i = 0; i < entities.size(); i++) {
+            if (entities.get(i).id == e.id) {
+                entities.set(i, e.clone());
+                return;
             }
         }
         throw new EntityNotFoundException("Entity with ID " + e.id + " not found");
