@@ -66,7 +66,7 @@ public class Database {
         //throws exception if the validator with the same entity code already exist or has another entity code
         if (validators.containsKey(entityCode)) {
             if (validators.get(entityCode).equals(validator)) {
-                throw new IllegalArgumentException("Entity with ID " + entityCode + " already exists");
+                throw new IllegalArgumentException("Validator for entity code " + entityCode + " already exists");
             }
             else {
                 throw new IllegalArgumentException("The given entity code has already been registered with a validator");
