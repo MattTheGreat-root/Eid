@@ -74,4 +74,15 @@ public class Database {
         }
         else validators.put(entityCode, validator);
     }
+
+    public static ArrayList<Entity> getAll(int entityCode) {
+        // return all the entities with specified entityCode
+        ArrayList<Entity> ret = new ArrayList<>();
+        for (Entity e : entities) {
+            if (e.getEntityCode() == entityCode) {
+                ret.add(e.clone());
+            }
+        }
+        return ret;
+    }
 }
