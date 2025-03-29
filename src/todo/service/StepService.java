@@ -9,9 +9,15 @@ import todo.entity.Task;
 import static todo.service.TaskService.scanner;
 
 public class StepService {
-    public static void saveStep(int taskRef, String title) throws InvalidEntityException {
+    public static void saveStep() throws InvalidEntityException {
         //creates and saves a new step
-        Step step = new Step(title, Step.Status.NOT_STARTED, taskRef);
+        System.out.println("Enter the ID of the task to add a step:");
+        int taskId = scanner.nextInt();
+        scanner.nextLine();
+        System.out.println("Enter step title:");
+        String stepTitle = scanner.nextLine();
+
+        Step step = new Step(stepTitle, Step.Status.NOT_STARTED, taskId);
         Database.add(step);
         System.out.println("Step added successfully. ID: " + step.id);
         System.out.println("Creation Date: " + step.getCreationDate());
@@ -32,7 +38,6 @@ public class StepService {
     }
 
     public static void updateStatus(int id) throws InvalidEntityException {
-        System.out.println("Enter the task status:");
         String newStatus = scanner.nextLine();
         switch (newStatus) {
             case "completed": {

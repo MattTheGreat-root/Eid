@@ -14,10 +14,20 @@ import java.util.Scanner;
 
 public class TaskService {
     static Scanner scanner = new Scanner(System.in);
-    public static void saveTask(String title, String description, Date dueDate) throws InvalidEntityException {
+    public static void saveTask() throws InvalidEntityException, ParseException {
         //creates and saves a new task
+        System.out.println("Enter task title:");
+        String title = scanner.nextLine();
+        System.out.println("Enter task description:");
+        String description = scanner.nextLine();
+        System.out.println("Enter due date (yyyy-MM-dd):");
+        String dueDateInput = scanner.nextLine();
+
+        Date dueDate = new SimpleDateFormat("yyyy-MM-dd").parse(dueDateInput);
         Task task = new Task(title, description, Task.Status.NOT_STARTED, dueDate);
         Database.add(task);
+        System.out.println("Task added successfully. ID: " + task.id);
+        System.out.println("Creation Date: " + task.getCreationDate());
     }
 
     public static void updateTitle(int id) throws InvalidEntityException {
@@ -65,8 +75,15 @@ public class TaskService {
         System.out.println("Enter the task status:");
         String newStatus = scanner.nextLine();
         switch (newStatus){
-            case "completed":{
+            case "completed", "complete":{
                 setAsCompleted(id);
+                for (Entity e : Database.getAll(Step.STEP_ENTITY_CODE)){
+                    Step s = (Step) e;
+                    if (s.taskRef == id){
+                        s.status = Step.Status.COMPLETED;
+                        Database.update(s);
+                    }
+                }
                 break;
             }
             case "in progress":{
@@ -78,7 +95,7 @@ public class TaskService {
                 break;
             }
             default:{
-                System.out.println("Invalid task status");
+                System.out.println("Invalid task status.\nchoose between completed, in progress or not started");
                 break;
             }
         }
@@ -126,11 +143,16 @@ public class TaskService {
         Task task = (Task) Database.get(id);
         System.out.println(task);
         System.out.println("Steps:");
+        boolean hasSteps = false;
         for (Entity e : Database.getAll(Step.STEP_ENTITY_CODE)) {
             Step step = (Step) e;
             if (step.taskRef == id) {
+                hasSteps = true;
                 System.out.println(step);
             }
+        }
+        if (!hasSteps) {
+            System.out.println("No steps for this task");
         }
         System.out.println();
     }
@@ -142,11 +164,13 @@ public class TaskService {
 
         for (Entity e : tasks) {
             Task task = (Task) e;
+            System.out.println();
             getTask(task.id);
         }
     }
 
     public static void getUndoneTasks() throws InvalidEntityException {
+        System.out.println();
         for (Entity e : Database.getAll(Task.TASK_ENTITY_CODE)) {
             Task task = (Task) e;
             if (task.status != Task.Status.COMPLETED) {
