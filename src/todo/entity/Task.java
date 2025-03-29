@@ -54,6 +54,6 @@ public class Task extends Entity implements Trackable {
 
     @Override
     public String toString(){
-        return "ID:" + id + "\nTitle:" + title + "Due date: " + dueDate + "\nStatus:" + status;
+        return "ID:" + id + "\nTitle:" + title + "\nDue date: " + dueDate + "\nStatus:" + status;
     }
 }
