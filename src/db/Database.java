@@ -1,14 +1,54 @@
 package db;
 
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import db.exception.*;
 
+
 public class Database {
     private Database() {}
     private static ArrayList<Entity> entities = new ArrayList<>();
     private static HashMap<Integer, Validator> validators = new HashMap<>();
+    private static HashMap<Integer, Serializer> serializers = new HashMap<>();
+
+    public static void save() throws IOException {
+        FileWriter writer = new FileWriter("db.txt");
+            for (Entity e : entities) {
+                Serializer serializer = serializers.get(e.getEntityCode());
+                if (serializer != null) {
+                    writer.write(serializer.serialize(e) + "\n");
+                }
+            }
+            System.out.println("Database saved successfully.");
+            writer.close();
+    }
+
+    public static void load() throws IOException {
+        BufferedReader reader = new BufferedReader(new FileReader("db.txt"));
+
+        String line;
+        while ((line = reader.readLine()) != null) {
+
+            String[] parts = line.split("\\|");
+            int entityCode = Integer.parseInt(parts[0]);
+            Serializer serializer = serializers.get(entityCode);
+            if (serializer != null) {
+                Entity entity = serializer.deserialize(line);
+                if (entity != null) {
+                    entities.add(entity);
+                }
+            }
+            else {
+                System.out.println("Serializer not found. Make sure not to change db.txt");
+            }
+        }
+        System.out.println("Database loaded successfully.");
+        reader.close();
+
+    }
+
 
     public static void add(Entity e) throws InvalidEntityException {
 
@@ -63,7 +103,7 @@ public class Database {
     }
 
     public static void registerValidator(int entityCode, Validator validator) {
-        //throws exception if the validator with the same entity code already exist or has another entity code
+        //throws exception if the validator with the same entity code already exist
         if (validators.containsKey(entityCode)) {
             if (validators.get(entityCode).equals(validator)) {
                 throw new IllegalArgumentException("Validator for entity code " + entityCode + " already exists");
@@ -73,6 +113,15 @@ public class Database {
             }
         }
         else validators.put(entityCode, validator);
+    }
+
+    public static void registerSerializer(int entityCode, Serializer serializer) {
+        if (serializers.containsKey(entityCode)) {
+            if (serializers.get(entityCode).equals(serializer)) {
+                throw new IllegalArgumentException("Serializer for entity code " + entityCode + " already exists");
+            }
+        }
+        else serializers.put(entityCode, serializer);
     }
 
     public static ArrayList<Entity> getAll(int entityCode) {
