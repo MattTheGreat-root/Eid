@@ -1,7 +1,10 @@
 import db.*;
 import db.exception.*;
-import todo.service.StepService;
-import todo.service.TaskService;
+import todo.entity.*;
+import todo.serializers.*;
+import todo.service.*;
+import todo.validator.*;
+import java.io.IOException;
 import java.text.ParseException;
 import java.util.InputMismatchException;
 import java.util.Objects;
@@ -11,7 +14,15 @@ public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
         String choice;
-
+        Database.registerValidator(Task.TASK_ENTITY_CODE, new TaskValidator());
+        Database.registerValidator(Step.STEP_ENTITY_CODE, new StepValidator());
+        Database.registerSerializer(Task.TASK_ENTITY_CODE, new TaskSerializer());
+        Database.registerSerializer(Step.STEP_ENTITY_CODE, new StepSerializer());
+        try {
+            Database.load();
+        } catch (IOException e) {
+            System.err.println("Could not load database.");
+        }
         do {
                 System.out.println("Enter a command:\nadd task - add step - delete - update task - update step - get task -" +
                         " get all tasks - get incomplete tasks - exit");
@@ -165,6 +176,11 @@ public class Main {
                         break;
                     }
                     case "exit":
+                        try {
+                            Database.save();
+                        } catch (IOException e){
+                            System.out.println("Could not save database.");
+                        }
                         System.out.println("Exiting...");
                         break;
 
