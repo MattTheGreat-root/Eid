@@ -12,8 +12,13 @@ public class StepService {
     public static void saveStep() throws InvalidEntityException {
         //creates and saves a new step
         System.out.println("Enter the ID of the task to add a step:");
-        int taskId = scanner.nextInt();
-        scanner.nextLine();
+        int taskId;
+        try {
+            taskId = Integer.parseInt(scanner.nextLine());
+        } catch (NumberFormatException e) {
+            System.out.println("Invalid ID. Please enter a numeric value.");
+            return;
+        }
         System.out.println("Enter step title:");
         String stepTitle = scanner.nextLine();
 

@@ -68,7 +68,7 @@ public class TaskService {
         System.out.println("Successfully updated the task.");
         System.out.println("Field: dueDate");
         System.out.println("old value: " + oldDueDate);
-        System.out.println("new value: " + newDueDate);
+        System.out.println("new value: " + task.dueDate);
     }
 
     public static void updateStatus(int id) throws InvalidEntityException {
