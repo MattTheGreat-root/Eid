@@ -103,7 +103,7 @@ public class Database {
     }
 
     public static void registerValidator(int entityCode, Validator validator) {
-        //throws exception if the validator with the same entity code already exist
+        //throws exception if the validator with the same entity code already exists
         if (validators.containsKey(entityCode)) {
             if (validators.get(entityCode).equals(validator)) {
                 throw new IllegalArgumentException("Validator for entity code " + entityCode + " already exists");
